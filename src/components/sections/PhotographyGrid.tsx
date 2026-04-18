@@ -7,18 +7,24 @@ import type { PhotoWork } from '@/types'
 const categories = [
   { key: 'all', label: '全部' },
   { key: 'portrait', label: '人像' },
-  { key: 'landscape', label: '风光' },
   { key: 'urban', label: '城市' },
+  { key: 'landscape', label: '风光' },
 ]
 
 export function PhotographyGrid() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
-  const filteredWorks =
-    activeCategory === 'all'
-      ? photoWorks
-      : photoWorks.filter((work) => work.category === activeCategory)
+  const categoryOrder = ['portrait', 'urban', 'landscape']
+
+  const filteredWorks = (activeCategory === 'all'
+    ? photoWorks
+    : photoWorks.filter((work) => work.category === activeCategory)
+  ).sort((a, b) => {
+    const orderA = categoryOrder.indexOf(a.category)
+    const orderB = categoryOrder.indexOf(b.category)
+    return orderA - orderB
+  })
 
   const handleOpenLightbox = (index: number) => {
     setLightboxIndex(index)
@@ -59,7 +65,7 @@ export function PhotographyGrid() {
           ))}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
           {filteredWorks.map((work, index) => (
             <PhotoCard
               key={work.id}
